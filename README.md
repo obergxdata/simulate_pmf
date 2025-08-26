@@ -1,4 +1,4 @@
-# Evolution Simulation
+# Product Market Fit Simulation
 
 A market evolution simulation that models customer behavior, product evolution, and competitive dynamics in a multi-dimensional preference space.
 
@@ -80,6 +80,18 @@ The simulation generates two types of charts in the `charts/` directory:
 
 1. **Cluster Plots** (`market/clusters_<step>.png`): Show customer clusters and product positions in preference space
 2. **Sales Timeseries** (`sales/sales_step_<step>.png`): Show product sales performance over time
+
+#### Example Charts
+
+**Customer Clusters with Product Positions:**
+![Cluster Example](cluster_example.png)
+
+This chart shows customer preference clusters (colored dots) and competing products (large circles with labels) positioned in the 2D preference space. Products adapt their features to better serve customer segments.
+
+**Product Sales Over Time:**
+![Sales Example](sales_example.png)
+
+This timeseries chart tracks each product's sales performance throughout the simulation, showing how products compete, evolve, and potentially die off over time.
 
 ### Logging
 

@@ -1,4 +1,7 @@
-# Ignore all files inside charts/ and its subfolders
-charts/**
+# Ignore all chart files but keep folder structure with .gitkeep files
+charts/*
+!charts/.gitkeep
+charts/*/*
+!charts/*/.gitkeep
 __pycache__/
 *.py[cod]
