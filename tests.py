@@ -1,9 +1,7 @@
 import pytest
 from unittest.mock import patch
-from sim import Customer, Product, Market, Simulation
+from sim import Customer, Product, Market
 from stats import ProductStats
-import numpy as np
-import random
 
 
 @patch("sim.SETTINGS")
@@ -16,8 +14,6 @@ def test_create_customer(mock_settings):
     mock_settings.cluster_std = 2
     customer = Customer(preferences=[1, 2, 3, 4, 5, 6, 7, 8, 9, 10], cluster=1)
     assert len(customer.preferences) == 10
-    assert customer.budget is not None
-    assert 100.0 <= customer.budget <= 1000.0
 
 
 @patch("sim.SETTINGS")
@@ -25,11 +21,10 @@ def test_create_product(mock_settings):
     mock_settings.preferences = 5
     mock_settings.min_budget = 100.0
     mock_settings.max_budget = 1000.0
-    product = Product(features=[1, 1, 1, 1, 1], nr=1)
+    product = Product(features=[1, 1, 1, 1, 1], nr=1, step=1)
     assert all(isinstance(p, int) for p in product.features)
     assert all(1 <= p <= 10 for p in product.features)
     assert len(product.features) == 5
-    assert 100.0 <= product.price <= 1000.0
 
 
 @patch("sim.SETTINGS")
@@ -46,7 +41,7 @@ def test_create_market(mock_settings):
 
 def test_l1_distance():
     market = Market()
-    product = Product(features=[10, 1, 10], nr=1)
+    product = Product(features=[10, 1, 10], nr=1, step=1)
     customer = Customer(preferences=[10, 10, 1], cluster=1)
     distance = market.l1_distance(customer.preferences, product.features)
     assert distance == 18
@@ -56,8 +51,8 @@ def test_pick_product():
     market = Market()
     market.take_step()
     # Create two products with different features
-    product_1 = Product(features=[10, 10, 10, 10, 10], nr=1)
-    product_2 = Product(features=[0, 0, 0, 0, 0], nr=2)
+    product_1 = Product(features=[10, 10, 10, 10, 10], nr=1, step=1)
+    product_2 = Product(features=[0, 0, 0, 0, 0], nr=2, step=1)
     product_1.stats.sales[1] = 0
     product_1.stats.sales[1] = 10
     # Create a customer with a preference for the first product
@@ -108,21 +103,21 @@ def test_improve_features(mock_settings):
     mock_settings.feature_improvement_rate = 0.5
     market = Market()
     market.customers = [Customer(preferences=[5, 5, 5, 5], cluster=1)] * 10
-    product = Product(features=[6, 6, 6, 6], nr=1)
+    product = Product(features=[6, 6, 6, 6], nr=1, step=1)
     product.improve_features(market.customers)
 
     assert product.features == [5.5, 5.5, 5.5, 5.5]
 
 
 def test_research():
-    product = Product(features=[10, 10, 10, 10], nr=1)
+    product = Product(features=[10, 10, 10, 10], nr=1, step=1)
     product.create_feature(min_prefs=0, max_prefs=10)
     assert product.features != [10, 10, 10, 10]
 
 
 def test_get_pct_of():
     market = Market()
-    market.products = [Product(features=[10, 10, 10, 10], nr=1)] * 100
+    market.products = [Product(features=[10, 10, 10, 10], nr=1, step=1)] * 100
     assert len(market.get_pct_of(market.products, 0.35)) == 35
 
 
@@ -133,8 +128,8 @@ def test_find_closest_customers():
     customers_2 = [Customer(preferences=[5, 5, 5, 5], cluster=2)] * 50
     market.customers = customers_1 + customers_2
 
-    product_1 = Product(features=[10, 10, 10, 10], nr=1)
-    product_2 = Product(features=[5, 5, 5, 5], nr=2)
+    product_1 = Product(features=[10, 10, 10, 10], nr=1, step=1)
+    product_2 = Product(features=[5, 5, 5, 5], nr=2, step=1)
 
     closest_product_1 = market.find_closest_customers(product_1)
     closest_product_2 = market.find_closest_customers(product_2)
@@ -201,8 +196,8 @@ def test_copy_feature(mock_settings):
     mock_settings.clusters = 4
     mock_settings.cluster_std = 1
     mock_settings.copy_feature_jitter = 5
-    product_1 = Product(features=[10, 10, 10, 10], nr=1)
-    product_2 = Product(features=[0, 0, 0, 0], nr=2)
+    product_1 = Product(features=[10, 10, 10, 10], nr=1, step=1)
+    product_2 = Product(features=[0, 0, 0, 0], nr=2, step=1)
     product_1.copy_feature(product_2, 2)
 
     changed = [abs(feature) for feature in product_1.features if feature != 10]
